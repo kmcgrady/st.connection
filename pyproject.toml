@@ -8,7 +8,7 @@ packages = [{include = "streamlit_connection", from = "src"}]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.9.7 || >3.9.7,<3.11"
-streamlit = "^1.13.0"
+streamlit = { file = "streamlit-1.15.2-py2.py3-none-any.whl" }
 pymongo = "^4.2.0"
 snowflake-connector-python = "2.8.0"
 asn1crypto = "1.5.1"
