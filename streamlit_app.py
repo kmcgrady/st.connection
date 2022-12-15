@@ -3,19 +3,19 @@ import streamlit as st
 connection = st.selectbox(
     "Connection",
     [
-        "mongo",
-        "snowflake",
+        # "mongo",
+        # "snowflake",
         "sqlite",
         "bigquery",
-        "google sheets",
-        "s3",
-        "postgres",
-        "deta",
-        "mysql (coming soon)",
+        # "google sheets",
+        # "s3",
+        # "postgres",
+        # "deta",
+        # "mysql (coming soon)",
     ],
 )
 
-bad_connection = st.checkbox("Simulate incorrect credentials")
+# bad_connection = st.checkbox("Simulate incorrect credentials")
 
 if connection == "mongo":
     with st.echo("above"):
@@ -55,22 +55,19 @@ elif connection == "snowflake":
 
 elif connection == "sqlite":
     with st.echo("above"):
-        from streamlit_connection import sqlite
+        conn, cursor = st.connection('sqlite')
 
-        conn = sqlite.get_connection()
-        cursor = conn.cursor()
-        cursor.execute("CREATE TABLE test (id integer, name text)")
-        cursor.execute("INSERT INTO test VALUES (1, 'foo')")
-        cursor.execute("INSERT INTO test VALUES (2, 'bar')")
+        if st.button("Reset"):
+            cursor.execute("DROP TABLE IF EXISTS test")
+            cursor.execute("CREATE TABLE test (id integer, name text)")
+            cursor.execute("INSERT INTO test VALUES (1, 'foo')")
+            cursor.execute("INSERT INTO test VALUES (2, 'bar')")
+            conn.commit()
 
-        query = "select * from test"
-
-        df = sqlite.get_dataframe(query, conn=conn)
-
-        st.write(df)
+        st.write(cursor.execute("select * from test"))
 elif connection == "bigquery":
     with st.echo("above"):
-        from streamlit_connection import bigquery
+        client = st.connection('bigquery')
 
         query = """
         select 'hello' as test
@@ -78,12 +75,7 @@ elif connection == "bigquery":
         select 'world' as test
         """
 
-        if bad_connection:
-            df = bigquery.get_dataframe(query, foo="bar")
-        else:
-            df = bigquery.get_dataframe(query)
-
-        st.write(df)
+        st.write(client.query(query))
 
 elif connection == "google sheets":
     with st.echo("above"):
